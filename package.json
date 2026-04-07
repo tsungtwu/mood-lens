@@ -1,0 +1,21 @@
+{
+  "name": "mood-lens",
+  "version": "1.0.0",
+  "description": "Interactive web reference for the Chase Bliss MOOD MKII guitar effects pedal",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.5.31"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.2",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "tailwindcss": "^4.2.2",
+    "vite": "^8.0.3"
+  }
+}

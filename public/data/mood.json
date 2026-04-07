@@ -1,0 +1,738 @@
+{
+  "sharedControls": [
+    {
+      "id": "mix",
+      "name": "MIX",
+      "channel": "shared",
+      "description": "Balances between the dry input signal and the MOOD wet signal. Fully counter-clockwise is dry only; fully clockwise is wet only.",
+      "range": "Dry ← → Wet",
+      "position": "topLeft"
+    },
+    {
+      "id": "clock",
+      "name": "CLOCK",
+      "channel": "shared",
+      "description": "Controls the sample rate of the entire pedal. Higher values yield higher fidelity; lower values produce lo-fi, degraded textures.",
+      "range": "2kHz – 64kHz",
+      "position": "topRight"
+    },
+    {
+      "id": "routing",
+      "name": "ROUTING",
+      "channel": "shared",
+      "description": "Three-position toggle that determines signal routing between channels.",
+      "range": "IN / Moon+IN / Moon",
+      "positions": [
+        {
+          "value": "IN",
+          "label": "Left",
+          "description": "Both channels process the dry input independently."
+        },
+        {
+          "value": "Moon+IN",
+          "label": "Center",
+          "description": "Wet channel processes the dry input, and Micro-Looper processes a mix of the wet output plus dry input."
+        },
+        {
+          "value": "Moon",
+          "label": "Right",
+          "description": "Wet channel processes the dry input, and Micro-Looper processes only the wet channel output."
+        }
+      ],
+      "position": "topCenter"
+    },
+    {
+      "id": "presets",
+      "name": "PRESETS",
+      "channel": "shared",
+      "description": "Three-position toggle for selecting stored presets.",
+      "range": "Left / Center / Right",
+      "positions": [
+        { "value": "left", "label": "Left", "description": "Loads preset stored in the left position." },
+        { "value": "center", "label": "Center", "description": "Loads preset stored in the center position." },
+        { "value": "right", "label": "Right", "description": "Loads preset stored in the right position." }
+      ],
+      "position": "bottomCenter"
+    },
+    {
+      "id": "wet-mode",
+      "name": "MODE (Wet)",
+      "channel": "wet",
+      "description": "Selects between Reverb, Delay, and Slip modes for the Wet Channel. Each mode changes the behavior of the TIME and MODIFY knobs.",
+      "range": "Reverb / Delay / Slip",
+      "controlType": "toggle"
+    },
+    {
+      "id": "moon-mode",
+      "name": "MODE (Moon)",
+      "channel": "loop",
+      "description": "Selects between Env, Tape, and Stretch modes for the Micro-Looper. Each mode changes the behavior of the LENGTH and MODIFY knobs.",
+      "range": "Env / Tape / Stretch",
+      "controlType": "toggle"
+    },
+    {
+      "id": "wet-bypass",
+      "name": "BYPASS (Wet)",
+      "channel": "wet",
+      "description": "Activates the Wet Channel. Tap to engage or bypass. Hold to Freeze — freezes and infinitely repeats the current sound.",
+      "range": "Tap: Bypass / Hold: Freeze",
+      "controlType": "footswitch"
+    },
+    {
+      "id": "moon-bypass",
+      "name": "BYPASS (Moon)",
+      "channel": "loop",
+      "description": "Alternates between recording and playback of a micro-loop. Tap to toggle record/play. Hold to engage overdubbing, recording additional audio onto the micro-loop.",
+      "range": "Tap: Record/Play / Hold: Overdub",
+      "controlType": "footswitch"
+    }
+  ],
+  "wetChannel": {
+    "modes": ["reverb", "delay", "slip"],
+    "controls": [
+      {
+        "id": "wet-time",
+        "name": "TIME",
+        "channel": "wet",
+        "range": "Min ← → Max",
+        "position": "midLeft",
+        "modeDescriptions": {
+          "reverb": "Controls the decay time and size of the reverb. Lower settings produce short, tight rooms; higher settings create vast ambient spaces.",
+          "delay": "Sets the delay time. Counter-clockwise for short slapback delays; clockwise for long, atmospheric repeats.",
+          "slip": "Determines the sampling window size. Smaller values capture tiny fragments; larger values capture longer phrases for manipulation."
+        }
+      },
+      {
+        "id": "wet-modify",
+        "name": "MODIFY",
+        "channel": "wet",
+        "range": "Min ← → Max",
+        "position": "midRight",
+        "modeDescriptions": {
+          "reverb": "Controls the smearing/diffusion of the reverb. Higher values blur the reverb into a wash; lower values keep it more defined.",
+          "delay": "Sets the feedback amount. Higher values produce more repeats, eventually reaching self-oscillation.",
+          "slip": "Controls the playback speed and direction of the sampled audio. Center is normal speed; left is reverse; right is faster."
+        }
+      }
+    ],
+    "channelOverview": "The Wet Channel is the effects engine of the MOOD MKII. It processes the input signal (or the Micro-Looper output depending on routing) through one of three effect modes. Each mode fundamentally changes the behavior of the TIME and MODIFY knobs. The CLOCK sample rate affects all modes — lower rates add lo-fi character, higher rates provide cleaner output.",
+    "signalFlow": "Input → Wet Channel Effect (Reverb/Delay/Slip) → Mix with Dry → Output. The Routing toggle determines whether the Micro-Looper also receives the Wet Channel output.",
+    "footswitch": {
+      "tap": "Activates or bypasses the Wet Channel. When the TRAILS dip switch is ON, the effect tail rings out naturally after bypass.",
+      "hold": "Engages Freeze. The behavior of Freeze changes depending on the active mode. Release to exit Freeze."
+    },
+    "clockInteraction": "The CLOCK knob directly affects the Wet Channel. Lower sample rates (2k–8k) create warped, degraded textures and reduce maximum delay time. Higher rates (32k–64k) provide clean, transparent effects. Changing CLOCK while the effect is active creates real-time pitch-shifting artifacts.",
+    "modeDetails": {
+      "reverb": {
+        "overview": "A lush, lo-fi reverb that ranges from tight rooms to infinite ambient pads. The character is shaped by the CLOCK sample rate — lower rates add grit and warmth.",
+        "howItWorks": "The reverb algorithm creates a diffused wash of reflections from the input signal. TIME controls the decay length — from short room reflections to near-infinite sustain. MODIFY controls the smearing/diffusion, blurring individual reflections into a smooth wash. At low CLOCK rates, the reverb takes on a degraded, warbly character reminiscent of vintage tape machines.",
+        "freezeBehavior": "Holding the left footswitch freezes the reverb tail into a sustained ambient pad. The pad sustains indefinitely until released. New audio layers on top of the frozen pad, allowing you to build evolving textures over a static reverb drone.",
+        "keySettings": [
+          { "name": "Ambient Pad", "description": "Lush, sustained reverb wash — ideal for ambient backgrounds", "knobs": [
+            { "name": "TIME", "position": 75 },
+            { "name": "MODIFY", "position": 67 },
+            { "name": "CLOCK", "position": 58 }
+          ]},
+          { "name": "Lo-Fi Room", "description": "Tight, gritty room reverb with vintage character", "knobs": [
+            { "name": "TIME", "position": 25 },
+            { "name": "MODIFY", "position": 25 },
+            { "name": "CLOCK", "position": 18 }
+          ]},
+          { "name": "Infinite Wash", "description": "Self-sustaining reverb that never fully decays — combine with Freeze for drones", "knobs": [
+            { "name": "TIME", "position": 95 },
+            { "name": "MODIFY", "position": 95 },
+            { "name": "CLOCK", "position": 50 }
+          ]}
+        ],
+        "tips": [
+          "Set CLOCK low and TIME high for a warbly, degraded ambient wash.",
+          "Use Freeze to capture a reverb tail, then play over it as a drone.",
+          "With MODIFY at noon and CLOCK at max, you get a surprisingly clean hall reverb.",
+          "Sweep CLOCK while holding Freeze for evolving pitch-shifted pad textures.",
+          "Route the Micro-Looper to process the reverb output (Moon routing) for layered ambient loops."
+        ]
+      },
+      "delay": {
+        "overview": "A sample-rate-dependent delay line. The delay time and character are deeply affected by the CLOCK setting — lower sample rates shorten the maximum delay time but add lo-fi texture.",
+        "howItWorks": "The delay captures and repeats the input signal after a set time interval. TIME sets the delay interval. MODIFY controls feedback — how many times the signal repeats. At high feedback settings, the delay self-oscillates, creating runaway cascading echoes. The CLOCK sample rate directly determines the maximum available delay time and the character of the repeats.",
+        "freezeBehavior": "Holding the left footswitch freezes the delay buffer into a looping echo. The loop continues repeating at the current delay time with current feedback level. Adjusting TIME while frozen changes the loop length in real-time, creating stutter and glitch effects. Release to resume normal delay behavior.",
+        "keySettings": [
+          { "name": "Slapback", "description": "Quick rockabilly-style single repeat", "knobs": [
+            { "name": "TIME", "position": 20 },
+            { "name": "MODIFY", "position": 25 },
+            { "name": "CLOCK", "position": 88 }
+          ]},
+          { "name": "Self-Oscillation", "description": "Runaway feedback that builds into chaotic, swirling textures", "knobs": [
+            { "name": "TIME", "position": 50 },
+            { "name": "MODIFY", "position": 82 },
+            { "name": "CLOCK", "position": 50 }
+          ]},
+          { "name": "Tape Echo", "description": "Warm, degraded repeats that decay with lo-fi character", "knobs": [
+            { "name": "TIME", "position": 50 },
+            { "name": "MODIFY", "position": 58 },
+            { "name": "CLOCK", "position": 22 }
+          ]}
+        ],
+        "tips": [
+          "Set MODIFY past 3 o'clock for self-oscillating feedback that builds into chaotic textures.",
+          "Adjust CLOCK while a delay is repeating for pitch-shifting effects.",
+          "Use short TIME with high MODIFY for karplus-strong style metallic tones.",
+          "Freeze a delay loop, then sweep TIME for real-time glitch/stutter effects.",
+          "Reduce CLOCK to shorten delay time and add warble — simulates worn tape delay."
+        ]
+      },
+      "slip": {
+        "overview": "A granular buffer effect that captures and manipulates live audio. Slip continuously samples your input and plays it back at altered speeds, creating unique time-stretched and pitch-shifted textures.",
+        "howItWorks": "Slip continuously captures audio into a buffer determined by the TIME knob. The MODIFY knob controls the playback speed and direction of the captured buffer. At center position, playback matches the input speed. Turning left slows and eventually reverses playback. Turning right speeds up playback. The result is a constantly evolving, granular manipulation of your live input — pitch-shifted, time-stretched, or reversed in real-time.",
+        "freezeBehavior": "Holding the left footswitch freezes the current sample buffer into a repeating, manipulated tone. The frozen slice loops continuously and can be further manipulated by adjusting MODIFY (speed/direction) and TIME (buffer window). Release to resume live sampling.",
+        "keySettings": [
+          { "name": "Half-Speed", "description": "Octave-down ghostly doubling of your playing", "knobs": [
+            { "name": "TIME", "position": 50 },
+            { "name": "MODIFY", "position": 42 },
+            { "name": "CLOCK", "position": 62 }
+          ]},
+          { "name": "Reverse", "description": "Reversed playback of live input — play forward, hear backward", "knobs": [
+            { "name": "TIME", "position": 62 },
+            { "name": "MODIFY", "position": 5 },
+            { "name": "CLOCK", "position": 50 }
+          ]},
+          { "name": "Granular Freeze", "description": "Freeze tiny grains for glitchy, stuttering textures", "knobs": [
+            { "name": "TIME", "position": 22 },
+            { "name": "MODIFY", "position": 50 },
+            { "name": "CLOCK", "position": 18 }
+          ]}
+        ],
+        "tips": [
+          "Set MODIFY to center for normal-speed playback, then slowly turn left for gradual pitch-down into reverse.",
+          "Quick tap-and-release of Freeze captures a tiny slice — stack multiple for glitch textures.",
+          "Large TIME + slow MODIFY creates haunting time-stretched pads from any input.",
+          "With MODIFY at full left and TIME mid-high, you get a real-time reverse effect on everything you play.",
+          "Use low CLOCK settings with Slip for extra-degraded granular textures that sound like broken cassettes."
+        ]
+      }
+    }
+  },
+  "microLooper": {
+    "modes": ["env", "tape", "stretch"],
+    "controls": [
+      {
+        "id": "loop-length",
+        "name": "LENGTH",
+        "channel": "loop",
+        "range": "Min ← → Max",
+        "position": "midLeft2",
+        "modeDescriptions": {
+          "env": "Sets the slice size for envelope-triggered sampling. Smaller values capture tight rhythmic fragments; larger values capture longer phrases.",
+          "tape": "Determines the loop length. Controls how long the recording buffer is before it loops back to the beginning.",
+          "stretch": "Sets the slice size for the stretch buffer. The captured slice is then time-stretched and manipulated by MODIFY."
+        }
+      },
+      {
+        "id": "loop-modify",
+        "name": "MODIFY",
+        "channel": "loop",
+        "range": "Min ← → Max",
+        "position": "midRight2",
+        "modeDescriptions": {
+          "env": "Controls the sensitivity of the envelope follower. Higher values trigger sampling more easily; lower values require louder input to trigger.",
+          "tape": "Controls playback speed and direction. Center is normal speed forward. Left goes to reverse; right goes to double speed and beyond.",
+          "stretch": "Controls the playback direction and stretch amount. Manipulates the captured slice by stretching, reversing, and warping it."
+        }
+      }
+    ],
+    "channelOverview": "The Micro-Looper (Moon Channel) captures and manipulates audio in real time. It can process either the dry input, the Wet Channel output, or a mix of both — depending on the Routing toggle. Each of the three modes offers a fundamentally different approach to sampling and looping. The LENGTH and MODIFY knobs change function depending on the active mode.",
+    "signalFlow": "Input (or Wet Channel output via Routing) → Micro-Looper Buffer → LENGTH/MODIFY Processing → Mix with other signals → Output. The Routing toggle determines what the Micro-Looper captures.",
+    "footswitch": {
+      "tap": "Alternates between recording and playback. First tap starts recording; second tap stops recording and begins looped playback. LED indicates state: off = recording, on (starburst) = playing.",
+      "hold": "Engages overdubbing (Tape/Stretch modes). While holding, new audio layers on top of the existing loop. In Env mode, hold resets the envelope trigger."
+    },
+    "clockInteraction": "The CLOCK sample rate affects the Micro-Looper's buffer length and audio quality. Lower CLOCK settings reduce the available loop time but add gritty, lo-fi character. Higher settings give longer loop times with cleaner audio. The maximum loop length also depends on the Loop Length hidden option (Short/Medium/Long).",
+    "modeDetails": {
+      "env": {
+        "overview": "An envelope-triggered sampler that captures slices of audio based on your playing dynamics. Each time the input signal crosses the sensitivity threshold, a new slice is captured and begins looping.",
+        "howItWorks": "Env mode listens to the input signal's volume. When the signal exceeds the threshold set by MODIFY, a new sample of the duration set by LENGTH is captured and immediately begins looping. Each new trigger replaces the previous sample. This creates a rhythmic, responsive interaction where your playing dynamics control when new slices are captured. Playing quietly lets the current slice keep looping; playing loudly triggers a new capture.",
+        "keySettings": [
+          { "name": "Rhythmic Slicer", "description": "Short slices that retrigger with each note — creates rhythmic stutter patterns", "knobs": [
+            { "name": "LENGTH", "position": 25 },
+            { "name": "MODIFY", "position": 50 },
+            { "name": "CLOCK", "position": 62 }
+          ]},
+          { "name": "Phrase Sampler", "description": "Captures longer phrases, only retriggers on loud hits", "knobs": [
+            { "name": "LENGTH", "position": 75 },
+            { "name": "MODIFY", "position": 25 },
+            { "name": "CLOCK", "position": 85 }
+          ]},
+          { "name": "Glitch Machine", "description": "Ultra-short degraded micro-samples that retrigger constantly", "knobs": [
+            { "name": "LENGTH", "position": 12 },
+            { "name": "MODIFY", "position": 78 },
+            { "name": "CLOCK", "position": 18 }
+          ]}
+        ],
+        "tips": [
+          "Play staccato notes with high sensitivity for rhythmic slice patterns.",
+          "Set LENGTH very short for glitchy micro-samples that retrigger with each note.",
+          "Combine with Wet Channel reverb for ambient slice textures that evolve with your playing.",
+          "Lower the MODIFY sensitivity so only hard pick attacks trigger new samples — lets you control when slices change.",
+          "Use the Routing toggle to sample your reverb/delay output instead of dry input."
+        ]
+      },
+      "tape": {
+        "overview": "A classic micro-looper with variable speed playback. Record a short loop and manipulate its playback speed and direction in real time. Overdub to build layered textures.",
+        "howItWorks": "Tape mode works like a traditional looper with tape-machine controls. Tap the footswitch to start recording. Tap again to stop and begin playback. The LENGTH knob sets the maximum recording time. MODIFY controls playback speed and direction: center is normal speed forward, turning left slows down and eventually reverses, turning right speeds up to double speed and beyond. Speed changes are smooth and continuous, simulating tape speed manipulation.",
+        "freezeBehavior": "Holding the right footswitch engages overdub mode. New audio is recorded on top of the existing loop without erasing it. Release to stop overdubbing. Each layer adds to the loop, building up density and texture.",
+        "speedReference": [
+          { "position": "Full left", "speed": "4× Reverse" },
+          { "position": "10 o'clock", "speed": "1× Reverse" },
+          { "position": "Center", "speed": "Normal (1× Forward)" },
+          { "position": "2 o'clock", "speed": "2× Forward" },
+          { "position": "Full right", "speed": "4× Forward" }
+        ],
+        "keySettings": [
+          { "name": "Classic Loop", "description": "Standard looper behavior — clean recording and playback", "knobs": [
+            { "name": "LENGTH", "position": 67 },
+            { "name": "MODIFY", "position": 50 },
+            { "name": "CLOCK", "position": 88 }
+          ]},
+          { "name": "Tape Stop", "description": "Record a loop, then sweep MODIFY left for tape-stop slowdown effect", "knobs": [
+            { "name": "LENGTH", "position": 50 },
+            { "name": "MODIFY", "position": 30 },
+            { "name": "CLOCK", "position": 50 }
+          ]},
+          { "name": "Half-Speed Ambient", "description": "Record at normal speed, play back at half speed for octave-down ambient textures", "knobs": [
+            { "name": "LENGTH", "position": 80 },
+            { "name": "MODIFY", "position": 42 },
+            { "name": "CLOCK", "position": 50 }
+          ]}
+        ],
+        "tips": [
+          "Record a loop, then sweep MODIFY for tape-stop and tape-speed-up effects.",
+          "Set MODIFY fully left for instant reverse playback of your loop.",
+          "Use short LENGTH for tight rhythmic loops; long LENGTH for ambient phrase looping.",
+          "Overdub at different MODIFY speeds to create layered textures at varying pitches.",
+          "Record silence, then overdub — this lets you build up a loop from scratch without an initial recording."
+        ]
+      },
+      "stretch": {
+        "overview": "A granular stretch looper that captures audio and time-stretches it. The captured slice can be stretched, reversed, and warped for experimental textures that maintain or destroy the original pitch.",
+        "howItWorks": "Stretch mode captures a slice of audio set by the LENGTH knob and applies granular time-stretching. Unlike Tape mode, Stretch can change playback speed without changing pitch (at moderate settings), or create extreme pitch-shifted artifacts at extreme settings. MODIFY controls both the stretch amount and direction. The result is a continuously evolving, warped version of the captured audio that can sound anything from subtly detuned to completely alien.",
+        "freezeBehavior": "Holding the right footswitch engages overdub mode, layering new audio on top of the stretched loop. This creates complex, evolving textures as new input is processed alongside the already-stretched material.",
+        "keySettings": [
+          { "name": "Evolving Pad", "description": "Time-stretched chords that slowly evolve — great for ambient pads", "knobs": [
+            { "name": "LENGTH", "position": 80 },
+            { "name": "MODIFY", "position": 55 },
+            { "name": "CLOCK", "position": 67 }
+          ]},
+          { "name": "Granular Destruction", "description": "Extreme stretching with lo-fi degradation — alien, glitchy textures", "knobs": [
+            { "name": "LENGTH", "position": 18 },
+            { "name": "MODIFY", "position": 95 },
+            { "name": "CLOCK", "position": 22 }
+          ]},
+          { "name": "Subtle Detune", "description": "Gentle pitch wobble and time-stretch — adds thickness without obvious effect", "knobs": [
+            { "name": "LENGTH", "position": 50 },
+            { "name": "MODIFY", "position": 52 },
+            { "name": "CLOCK", "position": 82 }
+          ]}
+        ],
+        "tips": [
+          "Capture a chord and stretch it for evolving pad textures.",
+          "Quick LENGTH + extreme MODIFY creates alien, granular artifacts.",
+          "Use with low CLOCK for extra-degraded stretched textures.",
+          "Overdub stretched audio with new input for continuously evolving soundscapes.",
+          "Combine with Wet Channel Reverb (Moon routing) to stretch reverb tails into infinite pads."
+        ]
+      }
+    },
+    "overdubInfo": {
+      "description": "In Tape and Stretch modes, you can overdub onto an existing loop. Hold the right footswitch while a loop is playing to add new layers on top. The original loop continues while new audio is recorded over it. Release to stop overdubbing.",
+      "details": [
+        "Each overdub pass adds to the existing loop — audio is never erased.",
+        "Overdub volume matches your input level — play quietly for subtle layers, loudly for dominant additions.",
+        "In Tape mode, overdubs are affected by the current MODIFY speed — overdub at half-speed for octave-shifted layers.",
+        "In Stretch mode, overdubs are processed through the stretch algorithm, creating uniquely warped layering.",
+        "The NO DUB dip switch disables overdub entirely — recording always replaces the existing loop."
+      ],
+      "tips": [
+        "Build up layers gradually — each overdub adds to the existing loop.",
+        "Use overdub with different CLOCK settings to stack textures of varying fidelity.",
+        "Change MODIFY between overdub passes to create loops with multiple speed/pitch layers.",
+        "Overdub silence to gradually fade out the existing loop (the original decays slightly with each pass)."
+      ]
+    }
+  },
+  "hiddenOptions": [
+    {
+      "id": "hidden-tone",
+      "name": "Tone",
+      "controlledBy": "Wet MODIFY (hold + turn)",
+      "direction": "Counter-clockwise = darker, clockwise = brighter",
+      "description": "Applies a tone filter to the wet channel output. Adjusts the brightness or darkness of the effect signal independently from the dry tone."
+    },
+    {
+      "id": "hidden-stereo-width",
+      "name": "Stereo Width",
+      "controlledBy": "TIME (hold + turn)",
+      "direction": "Counter-clockwise = mono, clockwise = wide stereo",
+      "description": "Controls the stereo spread of the wet channel output. Useful for placing the effect in the stereo field."
+    },
+    {
+      "id": "hidden-ramping-waveform",
+      "name": "Ramping Waveform",
+      "controlledBy": "MIX (hold + turn)",
+      "direction": "Selects waveform shape for ramping",
+      "description": "Sets the LFO waveform shape used when ramping controls. Options include triangle, sine, square, and random/sample-and-hold shapes."
+    },
+    {
+      "id": "hidden-fade",
+      "name": "Fade",
+      "controlledBy": "LENGTH (hold + turn)",
+      "direction": "Counter-clockwise = short fade, clockwise = long fade",
+      "description": "Controls the fade-in/fade-out time of the micro-looper. Shorter fades create abrupt loop transitions; longer fades create smooth crossfades."
+    },
+    {
+      "id": "hidden-level-balance",
+      "name": "Level Balance",
+      "controlledBy": "CLOCK (hold + turn)",
+      "direction": "Counter-clockwise = quiet, clockwise = loud",
+      "description": "Adjusts the overall output level balance between the wet and dry signals. Useful for matching levels when using extreme effect settings."
+    },
+    {
+      "id": "hidden-direct-micro-loop",
+      "name": "Direct Micro-Loop",
+      "controlledBy": "Moon MODIFY (hold + turn)",
+      "direction": "Counter-clockwise = off, clockwise = direct",
+      "description": "Routes the dry input directly into the Micro-Looper, bypassing the Wet Channel. Useful when you want to loop your clean signal."
+    },
+    {
+      "id": "hidden-sync",
+      "name": "Sync",
+      "controlledBy": "Moon MODE (hold + toggle)",
+      "direction": "Toggles sync on/off",
+      "description": "Synchronizes the Micro-Looper's timing to the Wet Channel's clock. When enabled, loop lengths quantize to divisions of the wet effect's timing."
+    },
+    {
+      "id": "hidden-spread-solo",
+      "name": "Spread Solo",
+      "controlledBy": "ROUTING (hold + toggle)",
+      "direction": "Toggles spread solo on/off",
+      "description": "When Spread dip switch is on, Spread Solo isolates one channel's spread to one side of the stereo field. Useful for creating distinct left/right textures."
+    },
+    {
+      "id": "hidden-loop-length",
+      "name": "Loop Length",
+      "controlledBy": "Moon MODE (hold + toggle)",
+      "direction": "Short / Medium / Long",
+      "description": "Adjusts the maximum available loop length for the Micro-Looper. Longer settings allow longer loops but at reduced sample resolution."
+    }
+  ],
+  "clock": {
+    "steps": [
+      { "value": "2k", "hz": 2000, "quality": "Ultra lo-fi, extreme degradation" },
+      { "value": "4k", "hz": 4000, "quality": "Very lo-fi, heavy aliasing" },
+      { "value": "6k", "hz": 6000, "quality": "Lo-fi, noticeable artifacts" },
+      { "value": "8k", "hz": 8000, "quality": "Telephone quality, gritty" },
+      { "value": "10k", "hz": 10000, "quality": "Low quality, warm" },
+      { "value": "12k", "hz": 12000, "quality": "Below CD quality, still warm" },
+      { "value": "16k", "hz": 16000, "quality": "Near FM radio quality" },
+      { "value": "20k", "hz": 20000, "quality": "Standard quality" },
+      { "value": "24k", "hz": 24000, "quality": "Good quality" },
+      { "value": "32k", "hz": 32000, "quality": "High quality, near transparent" },
+      { "value": "48k", "hz": 48000, "quality": "Very high quality" },
+      { "value": "64k", "hz": 64000, "quality": "Maximum fidelity, transparent" }
+    ],
+    "channelEffects": {
+      "wetChannel": "Lower clock rates shorten maximum delay time and add lo-fi character to reverb and delay.",
+      "microLooper": "Lower clock rates reduce loop length but add gritty, degraded texture to loops."
+    }
+  },
+  "routing": {
+    "positions": [
+      {
+        "value": "IN",
+        "label": "Left (IN)",
+        "description": "Both the Wet Channel and Micro-Looper process the dry input signal independently. Neither channel feeds into the other."
+      },
+      {
+        "value": "Moon+IN",
+        "label": "Center (Moon+IN)",
+        "description": "The Wet Channel processes the dry input. The Micro-Looper processes a mix of both the Wet Channel output and the dry input signal."
+      },
+      {
+        "value": "Moon",
+        "label": "Right (Moon)",
+        "description": "The Wet Channel processes the dry input. The Micro-Looper processes only the Wet Channel's output — useful for looping your reverb/delay tails."
+      }
+    ]
+  },
+  "dipSwitches": {
+    "leftBank": [
+      {
+        "id": "dip-time",
+        "name": "TIME",
+        "position": 1,
+        "onDescription": "Enables ramping on the TIME knob. When on, TIME sweeps between its current position and the ramp target using the selected waveform.",
+        "offDescription": "TIME operates normally without ramping."
+      },
+      {
+        "id": "dip-wet-modify",
+        "name": "Wet MODIFY",
+        "position": 2,
+        "onDescription": "Enables ramping on the Wet Channel MODIFY knob. Sweeps between current value and ramp target.",
+        "offDescription": "Wet MODIFY operates normally without ramping."
+      },
+      {
+        "id": "dip-clock",
+        "name": "CLOCK",
+        "position": 3,
+        "onDescription": "Enables ramping on the CLOCK knob. Creates sweeping sample rate changes for dynamic lo-fi effects.",
+        "offDescription": "CLOCK operates normally without ramping."
+      },
+      {
+        "id": "dip-moon-modify",
+        "name": "Moon MODIFY",
+        "position": 4,
+        "onDescription": "Enables ramping on the Micro-Looper MODIFY knob. Sweeps playback speed/direction automatically.",
+        "offDescription": "Moon MODIFY operates normally without ramping."
+      },
+      {
+        "id": "dip-length",
+        "name": "LENGTH",
+        "position": 5,
+        "onDescription": "Enables ramping on the LENGTH knob. Automatically sweeps loop/slice length.",
+        "offDescription": "LENGTH operates normally without ramping."
+      },
+      {
+        "id": "dip-bounce",
+        "name": "BOUNCE",
+        "position": 6,
+        "onDescription": "Ramp waveform bounces (reverses direction) at endpoints instead of resetting. Creates ping-pong style modulation.",
+        "offDescription": "Ramp waveform resets to start position at each cycle."
+      },
+      {
+        "id": "dip-sweep",
+        "name": "SWEEP",
+        "position": 7,
+        "onDescription": "Expression pedal controls the ramp target position instead of the knob value directly.",
+        "offDescription": "Expression pedal controls the knob value directly."
+      },
+      {
+        "id": "dip-polarity",
+        "name": "POLARITY",
+        "position": 8,
+        "onDescription": "Reverses expression pedal polarity. Toe-down becomes minimum; heel-down becomes maximum.",
+        "offDescription": "Standard expression pedal polarity. Toe-down is maximum; heel-down is minimum."
+      }
+    ],
+    "rightBank": [
+      {
+        "id": "dip-classic",
+        "name": "CLASSIC",
+        "position": 1,
+        "onDescription": "Activates Classic mode, emulating the behavior of the original MOOD pedal. Changes the character of effects to match MOOD MKI.",
+        "offDescription": "Standard MOOD MKII behavior."
+      },
+      {
+        "id": "dip-miso",
+        "name": "MISO",
+        "position": 2,
+        "onDescription": "Routes the Wet Channel and Micro-Looper to separate outputs (stereo). Left output = Wet, Right output = Micro-Looper.",
+        "offDescription": "Both channels are mixed together to both outputs."
+      },
+      {
+        "id": "dip-spread",
+        "name": "SPREAD",
+        "position": 3,
+        "onDescription": "Spreads the Wet Channel and Micro-Looper across the stereo field for a wider image.",
+        "offDescription": "No stereo spreading applied."
+      },
+      {
+        "id": "dip-dry-kill",
+        "name": "DRY KILL",
+        "position": 4,
+        "onDescription": "Removes the dry signal entirely from the output. Only the wet/effect signal passes through. Useful for 100% wet parallel effects loops.",
+        "offDescription": "Dry signal passes through normally."
+      },
+      {
+        "id": "dip-trails",
+        "name": "TRAILS",
+        "position": 5,
+        "onDescription": "Effect tails continue to ring out after bypassing the pedal. Natural decay of reverb/delay/loops.",
+        "offDescription": "Effects are cut immediately when bypassed. Hard bypass."
+      },
+      {
+        "id": "dip-latch",
+        "name": "LATCH",
+        "position": 6,
+        "onDescription": "Footswitches operate in latching mode. Press once to engage, press again to disengage.",
+        "offDescription": "Footswitches operate in momentary mode. Hold to engage, release to disengage."
+      },
+      {
+        "id": "dip-no-dub",
+        "name": "NO DUB",
+        "position": 7,
+        "onDescription": "Disables overdub functionality on the Micro-Looper. Recording always replaces the existing loop.",
+        "offDescription": "Overdub is enabled. New recordings layer on top of existing loops."
+      },
+      {
+        "id": "dip-smooth",
+        "name": "SMOOTH",
+        "position": 8,
+        "onDescription": "Applies smoothing/interpolation to knob movements and MIDI CC changes. Reduces zipper noise during parameter sweeps.",
+        "offDescription": "Parameters respond immediately to changes without smoothing."
+      }
+    ]
+  },
+  "midi": {
+    "cc": [
+      { "cc": 14, "name": "TIME", "category": "knobs", "range": "0–127", "notes": "Wet channel TIME knob" },
+      { "cc": 15, "name": "MODIFY (Wet)", "category": "knobs", "range": "0–127", "notes": "Wet channel MODIFY knob" },
+      { "cc": 16, "name": "LENGTH", "category": "knobs", "range": "0–127", "notes": "Micro-Looper LENGTH knob" },
+      { "cc": 17, "name": "MODIFY (Moon)", "category": "knobs", "range": "0–127", "notes": "Micro-Looper MODIFY knob" },
+      { "cc": 18, "name": "CLOCK", "category": "knobs", "range": "0–127 (stepped)", "notes": "Sample rate — see stepped values" },
+      { "cc": 19, "name": "MIX", "category": "knobs", "range": "0–127", "notes": "Dry/wet balance" },
+      { "cc": 20, "name": "Ramp Speed", "category": "knobs", "range": "0–127", "notes": "Speed of ramp LFO when dip switches are active" },
+      { "cc": 21, "name": "Wet Mode", "category": "toggles", "range": "0–42 / 43–84 / 85–127", "notes": "Reverb / Delay / Slip" },
+      { "cc": 22, "name": "Moon Mode", "category": "toggles", "range": "0–42 / 43–84 / 85–127", "notes": "Env / Tape / Stretch" },
+      { "cc": 23, "name": "Routing", "category": "toggles", "range": "0–42 / 43–84 / 85–127", "notes": "IN / Moon+IN / Moon" },
+      { "cc": 24, "name": "Tone", "category": "hiddenOptions", "range": "0–127", "notes": "Wet channel tone filter" },
+      { "cc": 25, "name": "Stereo Width", "category": "hiddenOptions", "range": "0–127", "notes": "Wet channel stereo spread" },
+      { "cc": 26, "name": "Ramping Waveform", "category": "hiddenOptions", "range": "0–127", "notes": "LFO shape for ramp dip switches" },
+      { "cc": 27, "name": "Fade", "category": "hiddenOptions", "range": "0–127", "notes": "Micro-Looper crossfade time" },
+      { "cc": 28, "name": "Level Balance", "category": "hiddenOptions", "range": "0–127", "notes": "Output level trim" },
+      { "cc": 29, "name": "Direct Micro-Loop", "category": "hiddenOptions", "range": "0–127", "notes": "Bypass wet channel for looper input" },
+      { "cc": 30, "name": "Sync", "category": "hiddenOptions", "range": "0–63 Off / 64–127 On", "notes": "Sync looper to wet channel timing" },
+      { "cc": 31, "name": "Spread Solo", "category": "hiddenOptions", "range": "0–63 Off / 64–127 On", "notes": "Isolate spread to one stereo side" },
+      { "cc": 32, "name": "Loop Length (Hidden)", "category": "hiddenOptions", "range": "0–42 / 43–84 / 85–127", "notes": "Short / Medium / Long max loop length" },
+      { "cc": 33, "name": "Ramp Depth", "category": "hiddenOptions", "range": "0–127", "notes": "Depth of ramp modulation" },
+      { "cc": 51, "name": "Preset Select", "category": "misc", "range": "0–42 / 43–84 / 85–127", "notes": "Left / Center / Right preset" },
+      { "cc": 52, "name": "Save Preset", "category": "misc", "range": "64–127", "notes": "Saves current settings to active preset slot" },
+      { "cc": 53, "name": "Bypass Toggle", "category": "misc", "range": "0–63 Off / 64–127 On", "notes": "Bypass or engage the entire pedal" },
+      { "cc": 54, "name": "Expression", "category": "misc", "range": "0–127", "notes": "External expression pedal value via MIDI" },
+      { "cc": 55, "name": "Tap Tempo", "category": "misc", "range": "64–127", "notes": "Send a tap tempo pulse" },
+      { "cc": 56, "name": "Ramp Engage", "category": "misc", "range": "0–63 Off / 64–127 On", "notes": "Start/stop ramp modulation" },
+      { "cc": 93, "name": "MIDI Clock Ignore", "category": "misc", "range": "0–63 Off / 64–127 On", "notes": "Ignore external MIDI clock" },
+      { "cc": 100, "name": "Randomize", "category": "misc", "range": "64–127", "notes": "Randomizes all knob and toggle positions" },
+      { "cc": 102, "name": "Left Stomp (Wet)", "category": "footswitches", "range": "0–63 Off / 64–127 On", "notes": "Engage/disengage or freeze (depending on mode)" },
+      { "cc": 103, "name": "Right Stomp (Moon)", "category": "footswitches", "range": "0–63 Off / 64–127 On", "notes": "Engage/disengage micro-looper recording/playback" },
+      { "cc": 104, "name": "Left Hold", "category": "footswitches", "range": "0–63 Off / 64–127 On", "notes": "Simulates holding the left footswitch (freeze)" },
+      { "cc": 105, "name": "Right Hold", "category": "footswitches", "range": "0–63 Off / 64–127 On", "notes": "Simulates holding the right footswitch" },
+      { "cc": 106, "name": "Both Stomp", "category": "footswitches", "range": "64–127", "notes": "Simulates pressing both footswitches simultaneously" },
+      { "cc": 107, "name": "Both Hold", "category": "footswitches", "range": "64–127", "notes": "Simulates holding both footswitches simultaneously" },
+      { "cc": 110, "name": "Dip Switch Bank L", "category": "misc", "range": "0–255 (8-bit)", "notes": "Set left bank dip switches via bitmask" },
+      { "cc": 111, "name": "Dip Switch Bank R", "category": "misc", "range": "0–255 (8-bit)", "notes": "Set right bank dip switches via bitmask" }
+    ],
+    "steppedValues": {
+      "clock": {
+        "cc": 18,
+        "name": "CLOCK (Stepped)",
+        "steps": [
+          { "midiRange": "0–10", "value": "2kHz" },
+          { "midiRange": "11–21", "value": "4kHz" },
+          { "midiRange": "22–32", "value": "6kHz" },
+          { "midiRange": "33–42", "value": "8kHz" },
+          { "midiRange": "43–53", "value": "10kHz" },
+          { "midiRange": "54–64", "value": "12kHz" },
+          { "midiRange": "65–74", "value": "16kHz" },
+          { "midiRange": "75–85", "value": "20kHz" },
+          { "midiRange": "86–96", "value": "24kHz" },
+          { "midiRange": "97–106", "value": "32kHz" },
+          { "midiRange": "107–117", "value": "48kHz" },
+          { "midiRange": "118–127", "value": "64kHz" }
+        ]
+      },
+      "tapeSpeed": {
+        "cc": 19,
+        "name": "Tape Speed (Moon MODIFY in Tape mode)",
+        "steps": [
+          { "midiRange": "0–8", "value": "4× Reverse" },
+          { "midiRange": "9–17", "value": "2× Reverse" },
+          { "midiRange": "18–26", "value": "1× Reverse" },
+          { "midiRange": "27–36", "value": "½× Reverse" },
+          { "midiRange": "37–45", "value": "¼× Reverse" },
+          { "midiRange": "46–54", "value": "Stop" },
+          { "midiRange": "55–63", "value": "¼× Forward" },
+          { "midiRange": "64–72", "value": "½× Forward" },
+          { "midiRange": "73–81", "value": "1× Forward" },
+          { "midiRange": "82–90", "value": "2× Forward" },
+          { "midiRange": "91–100", "value": "4× Forward" }
+        ]
+      },
+      "stretchSpeed": {
+        "cc": 19,
+        "name": "Stretch Speed (Moon MODIFY in Stretch mode)",
+        "steps": [
+          { "midiRange": "0–15", "value": "Reverse Stretch" },
+          { "midiRange": "16–31", "value": "Reverse Normal" },
+          { "midiRange": "32–47", "value": "Reverse Fast" },
+          { "midiRange": "48–63", "value": "Stop" },
+          { "midiRange": "64–79", "value": "Forward Fast" },
+          { "midiRange": "80–95", "value": "Forward Normal" },
+          { "midiRange": "96–111", "value": "Forward Stretch" },
+          { "midiRange": "112–127", "value": "Forward Max Stretch" }
+        ]
+      },
+      "syncedTime": {
+        "cc": 14,
+        "name": "Synced TIME (when Sync hidden option is on)",
+        "steps": [
+          { "midiRange": "0–18", "value": "Whole Note" },
+          { "midiRange": "19–36", "value": "Dotted Half" },
+          { "midiRange": "37–54", "value": "Half Note" },
+          { "midiRange": "55–72", "value": "Dotted Quarter" },
+          { "midiRange": "73–90", "value": "Quarter Note" },
+          { "midiRange": "91–108", "value": "Eighth Note" },
+          { "midiRange": "109–127", "value": "Sixteenth Note" }
+        ]
+      },
+      "syncedLength": {
+        "cc": 16,
+        "name": "Synced LENGTH (when Sync hidden option is on)",
+        "steps": [
+          { "midiRange": "0–18", "value": "4 Bars" },
+          { "midiRange": "19–36", "value": "3 Bars" },
+          { "midiRange": "37–54", "value": "2 Bars" },
+          { "midiRange": "55–72", "value": "1 Bar" },
+          { "midiRange": "73–90", "value": "Half Note" },
+          { "midiRange": "91–108", "value": "Quarter Note" },
+          { "midiRange": "109–127", "value": "Eighth Note" }
+        ]
+      }
+    },
+    "synthMode": {
+      "overview": "Synth Mode turns the MOOD MKII into a MIDI-controlled synthesizer. Enter via MIDI note input. The pedal generates tones based on the current Wet Channel mode, controllable via MIDI notes and CCs.",
+      "outputTypes": [
+        {
+          "name": "Open",
+          "cc58value": "0–42",
+          "description": "Continuous tone that sustains as long as the MIDI note is held. Pitch follows MIDI note number."
+        },
+        {
+          "name": "On-Off",
+          "cc58value": "43–84",
+          "description": "Tone triggers on note-on and cuts on note-off. Simple gated behavior."
+        },
+        {
+          "name": "ADSR",
+          "cc58value": "85–127",
+          "description": "Full ADSR envelope shaping. Attack, Decay, Sustain, and Release controlled via CCs 80–83."
+        }
+      ],
+      "cc": [
+        { "cc": 57, "name": "Octave", "range": "0–42 / 43–84 / 85–127", "notes": "-1 / 0 / +1 octave transpose" },
+        { "cc": 58, "name": "Output Type", "range": "0–42 / 43–84 / 85–127", "notes": "Open / On-Off / ADSR" },
+        { "cc": 59, "name": "Exit Synth Mode", "range": "64–127", "notes": "Returns to normal pedal operation" },
+        { "cc": 80, "name": "Attack", "range": "0–127", "notes": "ADSR attack time (ADSR mode only)" },
+        { "cc": 81, "name": "Decay", "range": "0–127", "notes": "ADSR decay time (ADSR mode only)" },
+        { "cc": 82, "name": "Sustain", "range": "0–127", "notes": "ADSR sustain level (ADSR mode only)" },
+        { "cc": 83, "name": "Release", "range": "0–127", "notes": "ADSR release time (ADSR mode only)" },
+        { "cc": 84, "name": "Portamento", "range": "0–127", "notes": "Glide time between notes" },
+        { "cc": 1, "name": "Mod Wheel", "range": "0–127", "notes": "Modulation depth — maps to MODIFY" }
+      ],
+      "gettingStarted": {
+        "connection": "Connect MIDI to the MOOD MKII via the 3.5mm TRS MIDI input (Type A). Use a standard MIDI-to-TRS adapter cable.",
+        "channel": "Set the MIDI channel on the MOOD MKII by holding both footswitches while powering on, then pressing the left footswitch to cycle through channels 1–16.",
+        "enterSynthMode": "Send any MIDI note to the MOOD MKII on the correct channel. The pedal will enter Synth Mode automatically.",
+        "presets": "Synth Mode settings are saved per preset. Switch presets to recall different synth configurations."
+      }
+    }
+  }
+}

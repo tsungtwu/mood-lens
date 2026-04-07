@@ -1,0 +1,4 @@
+node_modules
+dist
+*.local
+openspec/.vector-search.db*
